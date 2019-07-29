@@ -1,0 +1,1 @@
+-e git+https://github.com/sibson/redbeat.git#egg=celery-redbeat

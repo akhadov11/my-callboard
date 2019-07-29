@@ -1,0 +1,23 @@
+version: "3.7"
+
+services:
+  celery:
+    restart: always
+    build:
+      dockerfile: docker/prod/Dockerfile
+      context: .
+    image: callboard.celery.prod
+    container_name: callboard-celery
+    command: sh -x scripts/prod/celery-cmd.sh
+    env_file: .env
+    networks:
+      - production-network
+    environment:
+      - DJANGO_ENV=production
+
+networks:
+  production-network:
+    attachable: true
+    name: "production-network"
+    external: true
+

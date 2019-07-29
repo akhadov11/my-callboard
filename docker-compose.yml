@@ -1,0 +1,46 @@
+version: "3.7"
+
+services:
+  postgres:
+    image: postgres:11.1-alpine
+    volumes:
+      - "db:/var/lib/postgresql/data"
+    container_name: postgres
+    restart: always
+    env_file: .env
+    shm_size: '2gb'
+
+  redis:
+    restart: always
+    image: redis:4-alpine
+    container_name: redis
+    env_file: .env
+
+  app:
+    restart: always
+    build:
+      dockerfile: docker/prod/Dockerfile
+      context: .
+    image: callboard.app
+    container_name: callboard-app
+    command: sh -x scripts/prod/app-cmd.sh
+    depends_on:
+      - postgres
+      - redis
+    env_file: .env
+
+  celery:
+    restart: always
+    build:
+      dockerfile: docker/prod/Dockerfile
+      context: .
+    image: callboard.celery
+    container_name: callboard-celery
+    command: sh -x scripts/prod/celery-cmd.sh
+    depends_on:
+      - postgres
+      - redis
+    env_file: .env
+
+volumes:
+  db:

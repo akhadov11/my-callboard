@@ -1,0 +1,30 @@
+version: "3.7"
+
+services:
+  postgres:
+    volumes:
+      - "./docker/dev/init-postgres.sh:/docker-entrypoint-initdb.d/init-user-db.sh"
+
+  app:
+    build:
+      dockerfile: docker/dev/Dockerfile
+      context: .
+    ports:
+     - "8000:8000"
+     - "8888:8888"
+     - "2222:22"
+    command: sh -x scripts/dev/app-cmd.sh
+    volumes:
+      - ./server:/home
+      - "deploy-stuff:/home/deploy"
+
+  celery:
+    build:
+      dockerfile: docker/dev/Dockerfile
+      context: .
+    command: sh -x scripts/dev/celery-cmd.sh
+    volumes:
+      - ./server:/home
+
+volumes:
+  deploy-stuff:

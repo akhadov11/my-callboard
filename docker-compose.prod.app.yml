@@ -1,0 +1,28 @@
+version: "3.7"
+
+services:
+  app:
+    restart: always
+    build:
+      dockerfile: docker/prod/Dockerfile
+      context: .
+    image: callboard.app.prod
+    container_name: callboard-app
+    command: sh -x scripts/prod/app-cmd.sh
+    env_file: .env
+    networks:
+      - production-network
+    environment:
+      - DJANGO_ENV=production
+    volumes:
+      - django-files:/home/deploy
+
+networks:
+  production-network:
+    attachable: true
+    name: "production-network"
+    external: true
+
+volumes:
+  django-files:
+    external: true
